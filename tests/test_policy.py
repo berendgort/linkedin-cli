@@ -129,6 +129,14 @@ def test_unmatched_name_is_not_found() -> None:
         resolve_leads("nobody", leads[:1])
 
 
+def test_duplicate_slug_is_ambiguous_before_name() -> None:
+    one = Lead.model_validate(json.loads((FIX / "lead_pass.json").read_text(encoding="utf-8")))
+    other = one.model_copy(update={"name": "ada-north"})
+    with pytest.raises(LinAmbiguousError) as caught:
+        resolve_leads("ada-north", [one, other])
+    assert len(caught.value.candidates) == 2
+
+
 def test_ambiguous_name() -> None:
     rows = json.loads((FIX / "bench_two.json").read_text(encoding="utf-8"))
     leads = [Lead.model_validate(row) for row in rows]
