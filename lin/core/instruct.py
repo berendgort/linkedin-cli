@@ -27,7 +27,7 @@ def instruct_recipe() -> dict[str, Any]:
             "lin note --name 'Ada North' --json",
             "lin score --fixture lead.json --json",
             "lin budget --day 2026-10-09 --json",
-            "lin prepare ada-north --name 'Ada North' --yes --json",
+            "lin prepare ada-north --name 'Ada North' --day 2026-10-09 --yes --json",
             "lin log ada-north --day 2026-10-09 --yes --json",
         ],
         "writes": "prepare, log, and send do nothing unless --yes is present.",

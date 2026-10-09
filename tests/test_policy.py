@@ -8,7 +8,12 @@ from pathlib import Path
 
 import pytest
 
-from lin.core.exceptions import LinAmbiguousError, LinUnsupportedError, LinValidationError
+from lin.core.exceptions import (
+    LinAmbiguousError,
+    LinNotFoundError,
+    LinUnsupportedError,
+    LinValidationError,
+)
 from lin.http.client import send_invite
 from lin.models.lead import Invite, Lead
 from lin.policy.budget import plan_budget
@@ -113,6 +118,15 @@ def test_prepare_stops_and_blocks() -> None:
             invites=(),
             page_text="We want to confirm it's you",
         )
+
+
+def test_unmatched_name_is_not_found() -> None:
+    rows = json.loads((FIX / "bench_two.json").read_text(encoding="utf-8"))
+    leads = [Lead.model_validate(row) for row in rows]
+    with pytest.raises(LinNotFoundError):
+        resolve_leads("nobody", leads)
+    with pytest.raises(LinNotFoundError):
+        resolve_leads("nobody", leads[:1])
 
 
 def test_ambiguous_name() -> None:
