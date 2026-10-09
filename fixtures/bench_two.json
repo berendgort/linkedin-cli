@@ -1,0 +1,20 @@
+[
+  {
+    "slug": "ada-north",
+    "name": "Ada North",
+    "title": "Medical Director",
+    "country": "US",
+    "connections": 420,
+    "has_photo": true,
+    "text": "Independent obesity clinic. GLP-1."
+  },
+  {
+    "slug": "ada-south",
+    "name": "Ada North",
+    "title": "Medical Director",
+    "country": "US",
+    "connections": 180,
+    "has_photo": true,
+    "text": "Medical weight loss, semaglutide."
+  }
+]
