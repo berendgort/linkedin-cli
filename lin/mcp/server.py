@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-from datetime import date
 from typing import Any
 
 from lin.core.envelope import error_payload, success_payload
 from lin.core.exceptions import LinValidationError
 from lin.core.instruct import instruct_recipe
+from lin.core.slug import parse_day
 from lin.core.store import load_invites, load_profile
 from lin.models.profile import Profile
 from lin.policy.note import render_note
@@ -55,7 +55,7 @@ def build_server() -> Any:
             draft, _budget = prepare_draft(
                 slug=slug,
                 name=name,
-                day=date.fromisoformat(day),
+                day=parse_day(day),
                 invites=load_invites(),
                 blocked=profile.blocked,
                 hard_cap=profile.hard_cap,

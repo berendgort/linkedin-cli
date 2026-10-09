@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-import re
 from datetime import date
 from urllib.parse import quote
 
 from lin.core.exceptions import LinValidationError
+from lin.core.slug import check_slug
 from lin.models.lead import Budget, Draft, Invite, Lead
 from lin.policy.budget import plan_budget
 from lin.policy.icp import score_lead
@@ -16,7 +16,6 @@ __all__ = ("INVITE_URL", "prepare_draft", "restriction_hit")
 
 INVITE_URL = "https://www.linkedin.com/preload/custom-invite/?vanityName={slug}"
 
-_SLUG = re.compile(r"^[a-z0-9-]{3,80}$")
 _STOP = (
     "unusual activity",
     "temporarily restricted",
@@ -48,8 +47,7 @@ def prepare_draft(
     weekly_cap: int = 80,
     force: bool = False,
 ) -> tuple[Draft, Budget]:
-    if _SLUG.match(slug) is None:
-        raise LinValidationError("slug must be 3-80 lowercase letters, digits, or hyphens")
+    check_slug(slug)
     if slug in blocked:
         raise LinValidationError(f"{slug} is on the do-not-contact list")
     hit = restriction_hit(page_text)

@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
+from typing import NoReturn
+
 from lin.core.exceptions import LinUnsupportedError
 
 __all__ = ("send_invite",)
 
 
-def send_invite(slug: str, note: str) -> None:
+def send_invite(slug: str, note: str) -> NoReturn:
     """Refuse. The invite POST has not been captured."""
     _ = (slug, note)
     raise LinUnsupportedError(

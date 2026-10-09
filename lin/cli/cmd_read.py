@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from datetime import date
 from typing import Any
 
 import typer
@@ -10,6 +9,7 @@ import typer
 from lin.cli.catch import run_cmd
 from lin.cli.load import load_json
 from lin.core.exceptions import LinValidationError
+from lin.core.slug import parse_day
 from lin.core.store import load_invites
 from lin.models.lead import Invite, Lead
 from lin.policy.budget import plan_budget
@@ -67,7 +67,7 @@ def _budget(
     json_out: bool = typer.Option(False, "--json"),
 ) -> None:
     def _run() -> dict[str, Any]:
-        when = date.fromisoformat(day)
+        when = parse_day(day)
         report = plan_budget(when, _invites(fixture))
         return report.model_dump(mode="json")
 

@@ -12,7 +12,7 @@ One fact has one writer.
 | Remaining invites | `plan_budget` | counts non-withdrawn rows only |
 | Draft | `prepare_draft` | does not append the log |
 
-`prepare` does not write the invite log. A draft is not a sent invite. `lin log --yes` is the only append, and it is idempotent on `(day, slug)`.
+`prepare` does not write the invite log. A draft is not a sent invite. `lin log --yes` is the only append. One slug is one row: a later status keeps the original day and does not add a second invite.
 
 There is no LinkedIn response fixture. `fixtures/wire_contracts.json` has an empty `calls` list. `lin send` raises `unsupported` and does not open a connection.
 

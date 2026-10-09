@@ -2,14 +2,16 @@
 
 from __future__ import annotations
 
+from typing import NoReturn
+
 from lin.core.exceptions import LinValidationError
 
 __all__ = ("refuse_inmail", "refuse_reply")
 
 
-def refuse_reply() -> None:
+def refuse_reply() -> NoReturn:
     raise LinValidationError("Post-accept messages are off. Log the reply and stop.")
 
 
-def refuse_inmail() -> None:
+def refuse_inmail() -> NoReturn:
     raise LinValidationError("InMail is off. Do not spend credits from this CLI.")

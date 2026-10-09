@@ -11,6 +11,7 @@ from lin.cli.catch import run_cmd
 from lin.core.exceptions import LinValidationError
 from lin.core.instruct import instruct_recipe
 from lin.core.paths import lin_home, session_path
+from lin.core.slug import check_slug
 from lin.core.store import load_profile, load_session, save_profile, save_session
 from lin.models.profile import Profile, Session
 
@@ -73,7 +74,7 @@ def _block(
 ) -> None:
     def _run() -> dict[str, Any]:
         profile = load_profile() or Profile()
-        blocked = tuple(dict.fromkeys((*profile.blocked, slug)))
+        blocked = tuple(dict.fromkeys((*profile.blocked, check_slug(slug))))
         save_profile(profile.model_copy(update={"blocked": blocked}))
         return {"blocked": list(blocked)}
 

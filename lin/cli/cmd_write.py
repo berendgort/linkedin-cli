@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from datetime import date
 from typing import Any
 
 import typer
@@ -10,6 +9,7 @@ import typer
 from lin.cli.catch import run_cmd
 from lin.cli.load import load_json
 from lin.core.exceptions import LinValidationError
+from lin.core.slug import parse_day
 from lin.core.store import append_invite, load_invites, load_profile
 from lin.http.client import send_invite
 from lin.models.lead import Invite, InviteStatus, Lead
@@ -52,7 +52,7 @@ def _prepare(
         draft, _budget = prepare_draft(
             slug=slug,
             name=name,
-            day=date.fromisoformat(day),
+            day=parse_day(day),
             invites=_rows(invites),
             blocked=profile.blocked,
             lead=person,
@@ -84,7 +84,7 @@ def _log(
             kind = "withdrawn"
         else:
             raise LinValidationError("status must be invited, accepted, or withdrawn")
-        rows = append_invite(Invite(day=date.fromisoformat(day), slug=slug, status=kind))
+        rows = append_invite(Invite(day=parse_day(day), slug=slug, status=kind))
         return {"logged": len(rows), "slug": slug, "day": day}
 
     run_cmd(_run, as_json=json_out)
@@ -100,7 +100,6 @@ def _send(
         if not yes:
             raise LinValidationError("Refusing to send without --yes")
         send_invite(slug, note)
-        return {"sent": False}
 
     run_cmd(_run, as_json=json_out)
 
@@ -108,7 +107,6 @@ def _send(
 def _reply(json_out: bool = typer.Option(False, "--json")) -> None:
     def _run() -> dict[str, Any]:
         refuse_reply()
-        return {}
 
     run_cmd(_run, as_json=json_out)
 
@@ -116,7 +114,6 @@ def _reply(json_out: bool = typer.Option(False, "--json")) -> None:
 def _inmail(json_out: bool = typer.Option(False, "--json")) -> None:
     def _run() -> dict[str, Any]:
         refuse_inmail()
-        return {}
 
     run_cmd(_run, as_json=json_out)
 

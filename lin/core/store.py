@@ -7,8 +7,8 @@ import os
 import tempfile
 from pathlib import Path
 
-from lin.core.exceptions import LinValidationError
 from lin.core.paths import invites_path, lin_home, profile_path, session_path
+from lin.core.slug import check_slug
 from lin.models.lead import Invite
 from lin.models.profile import Profile, Session
 
@@ -81,15 +81,16 @@ def load_invites() -> tuple[Invite, ...]:
 
 
 def append_invite(invite: Invite) -> tuple[Invite, ...]:
-    """Idempotent on (day, slug). A second log does not add a second row."""
-    if not invite.slug.strip():
-        raise LinValidationError("slug is empty")
+    """One row per slug. A repeat updates status and keeps the original day."""
+    check_slug(invite.slug)
     _ensure_home()
-    current = load_invites()
-    for row in current:
-        if row.day == invite.day and row.slug == invite.slug:
-            return current
-    nxt = current + (invite,)
-    text = "".join(row.model_dump_json() + "\n" for row in nxt)
+    current = list(load_invites())
+    for index, row in enumerate(current):
+        if row.slug == invite.slug:
+            current[index] = Invite(day=row.day, slug=row.slug, status=invite.status)
+            break
+    else:
+        current.append(invite)
+    text = "".join(row.model_dump_json() + "\n" for row in current)
     _atomic_write(invites_path(), text)
-    return nxt
+    return tuple(current)
